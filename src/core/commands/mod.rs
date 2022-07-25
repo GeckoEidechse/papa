@@ -23,7 +23,11 @@ mod search;
 pub(crate) use search::search;
 mod update;
 pub(crate) use update::update;
+mod profile;
+pub(crate) use profile::*;
+#[cfg(feature = "cluster")]
 mod cluster;
+#[cfg(feature = "cluster")]
 pub(crate) use cluster::*;
 
 //=================
