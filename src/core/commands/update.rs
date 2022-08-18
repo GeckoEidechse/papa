@@ -5,7 +5,7 @@ use log::debug;
 use crate::{
     api::{
         self,
-        model::{self, LocalIndex, Mod},
+        model::{self, LocalIndex},
     },
     core::{
         commands::utils::{do_update, link_dir},

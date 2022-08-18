@@ -2,7 +2,6 @@ use std::fs;
 
 use crate::{
     api::model::Cluster,
-    core::config,
     core::{config::ManageMode, Ctx},
 };
 use anyhow::{Context, Result};

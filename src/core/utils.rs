@@ -8,7 +8,7 @@ use crate::model::Mod;
 use anyhow::{anyhow, Context, Result};
 use directories::ProjectDirs;
 use log::debug;
-use log::info;
+
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fs::{self, File, OpenOptions};
@@ -33,10 +33,10 @@ pub async fn update_index(local: &Path, global: &Path) -> Vec<model::Mod> {
     let glob = LocalIndex::load(global);
     for e in index.iter_mut() {
         if let Ok(installed) = &installed {
-            (*e).installed = installed.mods.iter().any(|(n, _)| n == &e.name);
+            e.installed = installed.mods.iter().any(|(n, _)| n == &e.name);
         }
         if let Ok(glob) = &glob {
-            (*e).global = glob.mods.iter().any(|(n, _)| n == &e.name);
+            e.global = glob.mods.iter().any(|(n, _)| n == &e.name);
         }
     }
     println!(" Done!");

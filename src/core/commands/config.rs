@@ -1,4 +1,4 @@
-use crate::core::{config, Ctx};
+use crate::core::{Ctx};
 use anyhow::Result;
 
 pub fn update_config(ctx: &mut Ctx, mods_dir: Option<String>, cache: Option<bool>) -> Result<()> {
