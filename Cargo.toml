@@ -12,26 +12,26 @@ repository = "https://github.com/AnActualEmerald/papa"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.58"
-clap = { version = "3.2.8", features = ["derive", "color"] }
+anyhow = "1.0.62"
+clap = { version = "3.2.17", features = ["derive", "color"] }
 convert_case = "0.5.0"
 directories = "4.0.1"
 env_logger = "0.9.0"
-futures-util = "0.3.21"
-indicatif = "0.16.2"
+futures-util = "0.3.23"
+indicatif = "0.17.0"
 log = "0.4.17"
-regex = "1.5.6"
+regex = "1.6.0"
 reqwest = { version = "0.11.11", features = ["stream"] }
-ron = "0.7.1"
-rustyline = "9.1.2"
-serde = { version = "1.0.138", features = ["derive"] }
-serde_json = "1.0.82"
-tokio = { version = "1.19.2", features = ["full"] }
+ron = "0.8.0"
+rustyline = "10.0.0"
+serde = { version = "1.0.143", features = ["derive"] }
+serde_json = "1.0.83"
+tokio = { version = "1.20.1", features = ["full"] }
 toml = "0.5.9"
 zip = "0.6.2"
 
 [features]
-default = ["northstar"]
+default = ["northstar", "cluster"]
 northstar = []
 launcher = ["northstar"]
 cluster = []
