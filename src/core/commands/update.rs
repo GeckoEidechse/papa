@@ -5,7 +5,7 @@ use log::debug;
 use crate::{
     api::{
         self,
-        model::{self, LocalIndex},
+        model::{self, LocalIndex, Mod},
     },
     core::{
         commands::utils::{do_update, link_dir},
@@ -204,9 +204,68 @@ async fn cluster_update(ctx: &mut Ctx, yes: bool) -> Result<()> {
         }
 
         for s in c.members.iter() {
-            let _name = s.0;
+            let name = s.0;
             let path = s.1;
-            let _installed = LocalIndex::load(path);
+            match LocalIndex::load(path) {
+                Ok(mut installed) => {
+                    let outdated = installed
+                        .mods
+                        .iter()
+                        .filter_map(|(n, m)| {
+                            index
+                                .iter()
+                                .find(|e| *n == e.name && m.version != e.version)
+                        })
+                        .collect();
+
+                    if let Err(e) = do_update(ctx, &outdated, &mut installed, &path).await {
+                        eprintln!(
+                            "Error updating mods for server {} at {}: {}",
+                            name,
+                            path.display(),
+                            e
+                        );
+                    }
+                    for (n, _) in to_relink.iter() {
+                        if let Some(r) = installed.linked.get(*n) {
+                            debug!("Relinking mod {}", name);
+                            //Update the submod links
+                            for p in r.mods.iter() {
+                                //delete the current link first
+                                let target = ctx.local_target.join(&p.name);
+                                if target.exists() {
+                                    fs::remove_dir_all(&target)?;
+                                }
+                                link_dir(&p.path, &target)?;
+                            }
+
+                            //replace the linked mod with the new mod info
+                            let (n, m) = global_installed
+                                .mods
+                                .iter()
+                                .find(|(e, _)| *e == &r.package_name)
+                                .ok_or_else(|| {
+                                    anyhow!("Unable to find linked mod in global index")
+                                })?;
+                            //Insert or update the mod in the linked set
+                            installed
+                                .linked
+                                .entry(n.to_owned())
+                                .and_modify(|v| *v = m.clone())
+                                .or_insert_with(|| m.clone());
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!(
+                        "Failed to load index for server {} at {}: {}",
+                        name,
+                        path.display(),
+                        e
+                    );
+                    continue;
+                }
+            }
         }
     }
     Ok(())

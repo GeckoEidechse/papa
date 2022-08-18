@@ -257,6 +257,7 @@ impl Cache {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Cluster {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     ///K: Member Name V: Member Path
     pub members: HashMap<String, PathBuf>,

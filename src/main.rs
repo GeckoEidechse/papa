@@ -173,7 +173,7 @@ async fn main() {
 
     let dirs = ProjectDirs::from("me", "greenboi", "papa").unwrap();
 
-    let rl = Editor::<()>::new();
+    let rl = Editor::<()>::new().unwrap();
 
     let mut ctx = core::Ctx::new(dirs, rl).expect("Failed to create context");
 

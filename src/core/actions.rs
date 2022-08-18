@@ -47,7 +47,7 @@ pub async fn download_file(url: &str, file_path: PathBuf) -> Result<File> {
     //setup the progress bar
     let pb = ProgressBar::new(file_size).with_style(ProgressStyle::default_bar().template(
         "{msg}\n{spinner:.green} [{duration}] [{bar:30.cyan}] {bytes}/{total_bytes} {bytes_per_sec}",
-    ).progress_chars("=>-")).with_message(format!("Downloading {}", url));
+    )?.progress_chars("=>-")).with_message(format!("Downloading {}", url));
 
     //start download in chunks
     let mut file = File::create(&file_path)?;
