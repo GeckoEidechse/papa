@@ -19,6 +19,8 @@ pub struct Config {
     pub mode: ManageMode,
     #[serde(default = "default_prof")]
     pub profile: String,
+    #[serde(skip)]
+    pub path: Option<PathBuf>,
 }
 
 fn default_prof() -> String {
@@ -50,6 +52,7 @@ impl Config {
             ],
             mode: ManageMode::Client,
             profile: "default".to_string(),
+            path: None,
         }
     }
 
@@ -68,13 +71,30 @@ impl Config {
     pub fn set_cache(&mut self, cache: &bool) {
         self.cache = *cache;
     }
+
+    pub fn save(&self) -> Result<()> {
+        if let Some(cfg_path) = &self.path {
+            if cfg_path.exists() {
+                let mut cfg = File::create(&cfg_path).context("Error opening config file")?;
+                let parsed = toml::to_string_pretty(self).context("Error serializing config")?;
+                cfg.write_all(parsed.as_bytes())
+                    .context("Unable to write config file")?;
+            } else {
+                return Err(anyhow!("Config file does not exist to write to"));
+            }
+            Ok(())
+        } else {
+            Err(anyhow!("Tried to save config file with no path"))
+        }
+    }
 }
 
-pub fn load_config(config_dir: &Path) -> Result<Config> {
-    let cfg_path = config_dir.join("config.toml");
+pub fn load_config(cfg_path: &Path) -> Result<Config> {
     if cfg_path.exists() {
         let cfg = read_to_string(cfg_path).context("Unable to read config file")?;
-        toml::from_str(&cfg).context("Unable to parse config")
+        let mut conf: Config = toml::from_str(&cfg).context("Unable to parse config")?;
+        conf.path = Some(cfg_path.to_path_buf());
+        Ok(conf)
     } else {
         let mut cfg = File::create(cfg_path).context("Unable to create config file")?;
         let def = Config::new(String::from("./mods"), true, String::new(), None);
@@ -83,18 +103,4 @@ pub fn load_config(config_dir: &Path) -> Result<Config> {
             .context("Unable to write config file")?;
         Ok(def)
     }
-}
-
-pub fn save_config(config_dir: &Path, config: &Config) -> Result<()> {
-    let cfg_path = config_dir.join("config.toml");
-
-    if cfg_path.exists() {
-        let mut cfg = File::create(&cfg_path).context("Error opening config file")?;
-        let parsed = toml::to_string_pretty(&config).context("Error serializing config")?;
-        cfg.write_all(parsed.as_bytes())
-            .context("Unable to write config file")?;
-    } else {
-        return Err(anyhow!("Config file does not exist to write to"));
-    }
-    Ok(())
 }

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `config` option to specify config file path
+
 ### Changed
 - Remove message is now less spammy
 

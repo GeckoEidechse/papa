@@ -22,7 +22,7 @@ pub(crate) async fn init_northstar(ctx: &mut Ctx, game_path: &Path) -> Result<()
         .set_dir(game_path.join("R2Northstar").join("mods").to_str().unwrap());
 
     println!("Set mod directory to {}", ctx.config.mod_dir().display());
-    config::save_config(ctx.dirs.config_dir(), &ctx.config)?;
+    ctx.config.save()?;
 
     Ok(())
 }
@@ -68,7 +68,7 @@ pub async fn update_northstar(ctx: &mut Ctx) -> Result<()> {
 
         do_install(ctx, nmod, &ctx.config.game_path).await?;
         ctx.config.nstar_version = Some(nmod.version.clone());
-        config::save_config(ctx.dirs.config_dir(), &ctx.config)?;
+        ctx.config.save()?;
 
         Ok(())
     } else {

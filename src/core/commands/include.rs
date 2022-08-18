@@ -18,7 +18,11 @@ pub(crate) fn include(ctx: &Ctx, mods: Vec<String>, force: bool) -> Result<()> {
                 continue;
             }
             for m in g.1.mods.iter() {
-                link_dir(&m.path, &ctx.local_target.join(&m.name)).context(format!(
+                link_dir(
+                    &ctx.global_target.join(&m.path),
+                    &ctx.local_target.join(&m.name),
+                )
+                .context(format!(
                     "Unable to create link to {}... Does a file by that name already exist?",
                     ctx.local_target.join(&m.name).display()
                 ))?;

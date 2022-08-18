@@ -26,6 +26,8 @@ struct Cli {
     command: Commands,
     #[clap(short, long)]
     debug: bool,
+    #[clap(short, long)]
+    config: Option<PathBuf>,
 }
 
 #[derive(Subcommand)]
@@ -175,7 +177,7 @@ async fn main() {
 
     let rl = Editor::<()>::new().unwrap();
 
-    let mut ctx = core::Ctx::new(dirs, rl).expect("Failed to create context");
+    let mut ctx = core::Ctx::new(dirs, rl, cli.config).expect("Failed to create context");
 
     let res = match cli.command {
         Commands::Update { yes } => update(&mut ctx, yes).await,

@@ -260,7 +260,7 @@ pub struct Cluster {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     ///K: Member Name V: Member Path
-    pub members: HashMap<String, PathBuf>,
+    pub members: HashMap<String, Server>,
 
     #[serde(skip)]
     path: PathBuf,
@@ -311,6 +311,19 @@ impl Cluster {
         fs::write(&self.path, pretty)?;
 
         Ok(())
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Server {
+    pub path: PathBuf,
+    ///Relative to server root
+    pub mod_dir: PathBuf,
+}
+
+impl Server {
+    pub fn target(&self) -> PathBuf {
+        self.path.join(&self.mod_dir)
     }
 }
 

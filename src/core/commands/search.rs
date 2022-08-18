@@ -10,11 +10,12 @@ pub(crate) async fn search(ctx: &Ctx, term: Vec<String>) -> Result<()> {
 
     let print = |f: &Mod| {
         println!(
-            " \x1b[92m{}@{}\x1b[0m   [{}]{}\n\n    {}",
+            " \x1b[92m{}@{}\x1b[0m   [{}]{}{}\n\n    {}",
             f.name,
             f.version,
             f.file_size_string(),
             if f.installed { "[installed]" } else { "" },
+            if f.global { "[global]" } else { "" },
             f.desc
         );
         println!();

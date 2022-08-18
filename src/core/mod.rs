@@ -29,9 +29,14 @@ pub struct Ctx {
 }
 
 impl Ctx {
-    pub fn new(dirs: ProjectDirs, rl: Editor<()>) -> Result<Self> {
+    pub fn new(dirs: ProjectDirs, rl: Editor<()>, conf: Option<PathBuf>) -> Result<Self> {
         utils::ensure_dirs(&dirs);
-        let config = config::load_config(dirs.config_dir()).expect("Unable to load config file");
+        let config = config::load_config(&if let Some(p) = conf {
+            p
+        } else {
+            dirs.config_dir().join("config.toml")
+        })
+        .expect("Unable to load config file");
         let cache = Cache::build(dirs.cache_dir()).unwrap();
         let lt = config.mod_dir.clone();
         let gt = dirs.data_local_dir();

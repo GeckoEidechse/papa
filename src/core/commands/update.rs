@@ -205,8 +205,9 @@ async fn cluster_update(ctx: &mut Ctx, yes: bool) -> Result<()> {
 
         for s in c.members.iter() {
             let name = s.0;
-            let path = s.1;
-            match LocalIndex::load(path) {
+            let server = s.1;
+            let path = server.target();
+            match LocalIndex::load(&path) {
                 Ok(mut installed) => {
                     let outdated = installed
                         .mods
@@ -228,7 +229,7 @@ async fn cluster_update(ctx: &mut Ctx, yes: bool) -> Result<()> {
                     }
                     for (n, _) in to_relink.iter() {
                         if let Some(r) = installed.linked.get(*n) {
-                            debug!("Relinking mod {}", name);
+                            debug!("Relinking mod {}", n);
                             //Update the submod links
                             for p in r.mods.iter() {
                                 //delete the current link first
@@ -236,7 +237,7 @@ async fn cluster_update(ctx: &mut Ctx, yes: bool) -> Result<()> {
                                 if target.exists() {
                                     fs::remove_dir_all(&target)?;
                                 }
-                                link_dir(&p.path, &target)?;
+                                link_dir(&ctx.global_target.join(&p.path), &target)?;
                             }
 
                             //replace the linked mod with the new mod info

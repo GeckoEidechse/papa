@@ -24,7 +24,7 @@ pub(crate) fn new(ctx: &mut Ctx, name: Option<String>) -> Result<()> {
     ctx.config.mode = ManageMode::Server;
     println!("Set management mode to server");
 
-    config::save_config(ctx.dirs.config_dir(), &ctx.config)?;
+    ctx.config.save()?;
 
     Ok(())
 }

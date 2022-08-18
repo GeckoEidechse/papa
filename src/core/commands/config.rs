@@ -16,6 +16,6 @@ pub fn update_config(ctx: &mut Ctx, mods_dir: Option<String>, cache: Option<bool
         }
     }
 
-    config::save_config(ctx.dirs.config_dir(), &ctx.config)?;
+    ctx.config.save()?;
     Ok(())
 }
